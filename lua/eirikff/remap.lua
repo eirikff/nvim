@@ -37,3 +37,6 @@ vim.keymap.set("n", "<leader>ff", vim.lsp.buf.format)
 -- search and replace the word the cursor is on
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
+-- map esc to exit terminal mode
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
+
