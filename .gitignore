@@ -1,2 +1,3 @@
-plugin/
+# Ignore relative to .gitignore (which is at /)
+/plugin/
 
