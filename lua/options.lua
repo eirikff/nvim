@@ -2,11 +2,12 @@
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 
--- Set highlight on search
-vim.o.hlsearch = false
+-- change cursor style to always be block
+vim.o.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor25"
 
 -- Make line numbers default
-vim.wo.number = true
+vim.o.number = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -14,13 +15,27 @@ vim.o.mouse = 'a'
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.o.clipboard = 'unnamedplus'
+--vim.o.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.o.breakindent = true
 
+-- Set text wrap
+vim.o.wrap = true
+
 -- Save undo history
 vim.o.undofile = true
+vim.o.undodir = os.getenv("HOME") .. "/.vim/undodir"
+
+-- Disable swapfiles
+vim.o.swapfile = false
+vim.o.backup = false
+
+-- Set highlight on search
+vim.o.hlsearch = true
+
+-- Set incremental search
+vim.o.incsearch = true
 
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.o.ignorecase = true
@@ -38,5 +53,11 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
+
+-- Add columns 
+vim.o.colorcolumn = "80,100"
+
+-- Add space at top/bottom when scrolling
+vim.o.scrolloff = 2
 
 -- vim: ts=2 sts=2 sw=2 et
