@@ -1,5 +1,6 @@
 # Ignore relative to .gitignore (which is at /)
 /plugin/
+lazy-lock.json
 
 # From kickstart.nvim
 tags
