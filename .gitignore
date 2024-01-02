@@ -1,3 +1,9 @@
 # Ignore relative to .gitignore (which is at /)
 /plugin/
 
+# From kickstart.nvim
+tags
+test.sh
+.luarc.json
+nvim
+
