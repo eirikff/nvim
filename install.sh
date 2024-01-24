@@ -11,6 +11,30 @@ function ask_Yn() {
 	test "${resp_lc}" = "y"
 }
 
+function usage() {
+	cat <<EOF
+Usage:
+	$0 [--start]
+
+Arguments:
+	--start: start install immediately
+EOF
+}
+
+start_immediately=false
+while [ "$#" -gt 0 ]; do
+	case "$1" in
+		--start)
+			start_immediately=true
+			;;
+		*)
+			echo "Unknown argument: $1"
+			usage
+			exit 1
+			;;
+	esac
+	shift
+done
 
 cat <<EOF
 Welcome to eirikff's nvim installer.
@@ -21,7 +45,8 @@ This script has three install steps:
 3. Install the nvim config from Github (assuming SSH access)
 EOF
 
-if ! ask_Yn "Do you want to continue installation?"; then
+if [ "${start_immediately}" = "false" ] && \
+   ! ask_Yn "Do you want to continue installation?"; then
 	echo "Aborting..."
 	exit 0
 fi
