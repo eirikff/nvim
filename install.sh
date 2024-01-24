@@ -35,7 +35,8 @@ sudo apt update -yqq
 #### INSTALL DEPENDENCIES ####
 sudo apt install -yqq neovim \
 	build-essential \
-	npm
+	npm \
+	ripgrep
 
 
 #### INSTALL CONFIG REPO ####
