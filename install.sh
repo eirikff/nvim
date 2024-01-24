@@ -40,7 +40,7 @@ sudo apt install -yqq neovim \
 
 #### INSTALL CONFIG REPO ####
 repo="git@github.com:eirikff/nvim.git"
-target="~/.config/nvim"
+target="$HOME/.config/nvim"
 
 mkdir $(dirname ${target})
 if [ -d ${target} ]; then
