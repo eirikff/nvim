@@ -28,12 +28,12 @@ fi
 
 #### INSTALL NVIM FROM PPA ####
 ppa="ppa:neovim-ppa/unstable"
-sudo add-apt-repository ${ppa} --yes --no-update
-sudo apt update
+sudo add-apt-repository --yes --no-update ${ppa}
+sudo apt update -yqq
 
 
 #### INSTALL DEPENDENCIES ####
-sudo apt install neovim -yqq \
+sudo apt install -yqq neovim \
 	build-essential \
 	npm
 
