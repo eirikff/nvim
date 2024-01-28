@@ -61,10 +61,9 @@ sudo apt update -yqq
 # We need nodejs and npm for Mason and several LSPs. However, the nodejs
 # version in apt can be very old, install latest LTS repo first
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-sudo apt install -yqq neovim \
+sudo apt install -y neovim \
 	build-essential \
 	nodejs \
-	npm \
 	ripgrep
 
 
