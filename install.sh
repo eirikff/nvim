@@ -1,14 +1,24 @@
 #! /usr/bin/env bash
 
+function green() {
+	local string="$@"
+	echo -e "\e[32m${string}\e[0m"
+}
+
 function ask_Yn() {
-	read -p "$1 (Y/n) " resp
+	if [ "${always_yes}" = "true" ]; then
+		return 0
+	fi 
+
+	local prompt="$1 (Y/n) "
+	read -p "$(green "${prompt}")" resp
 	if [ -z "${resp}" ]; then
 		resp_lc="y"
 	else
 		resp_lc=$(echo "${resp}" | tr '[:upper:]' '[:lower:]')
 	fi
 
-	test "${resp_lc}" = "y"
+	[ "${resp_lc}" = "y" ]
 }
 
 function usage() {
@@ -73,7 +83,7 @@ if ask_Yn "Use SSH repo link?"; then
 else 
 	repo="https://github.com/eirikff/nvim.git"
 fi
-echo "Using repo link: ${repo}"
+echo $(green "Using repo link: ${repo}")
 target="$HOME/.config/nvim"
 
 mkdir -p $(dirname ${target})  # mkdir parent
