@@ -73,6 +73,7 @@ if ask_Yn "Use SSH repo link?"; then
 else 
 	repo="https://github.com/eirikff/nvim.git"
 fi
+echo "Using repo link: ${repo}"
 target="$HOME/.config/nvim"
 
 mkdir -p $(dirname ${target})  # mkdir parent
