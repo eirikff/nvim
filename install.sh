@@ -42,7 +42,7 @@ Welcome to eirikff's nvim installer.
 This script has three install steps:
 1. Install the latest version of nvim from the unstable PPA
 2. Install all dependencies for the nvim plugins
-3. Install the nvim config from Github (assuming SSH access)
+3. Install the nvim config from Github
 EOF
 
 if [ "${start_immediately}" = "false" ] && \
@@ -69,10 +69,14 @@ sudo apt install -yqq neovim \
 
 
 #### INSTALL CONFIG REPO ####
-repo="git@github.com:eirikff/nvim.git"
+if ask_Yn "Use SSH repo link?"; then
+	repo="git@github.com:eirikff/nvim.git"
+else 
+	repo="https://github.com/eirikff/nvim.git"
+fi
 target="$HOME/.config/nvim"
 
-mkdir $(dirname ${target})
+mkdir -p $(dirname ${target})  # mkdir parent
 if [ -d ${target} ]; then
 	mv ${target} ${target}.bak
 	echo "Made old nvim config folder to ${target}.bak"
