@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 function green() {
 	local string="$@"
@@ -57,7 +57,7 @@ EOF
 
 if [ "${start_immediately}" = "false" ] && \
    ! ask_Yn "Do you want to continue installation?"; then
-	echo "Aborting..."
+	echo $(green "Aborting...")
 	exit 0
 fi
 
@@ -88,13 +88,23 @@ target="$HOME/.config/nvim"
 
 mkdir -p $(dirname ${target})  # mkdir parent
 if [ -d ${target} ]; then
-	mv ${target} ${target}.bak
-	echo "Made old nvim config folder to ${target}.bak"
+	pushd "${target}" &>/dev/null
+	if git remote get-url $(git remote) | grep -e 'eirik-ff/nvim' &>/dev/null
+	then
+		git pull && git checkout main && \
+			echo "$(green "Pulled latest changes from remote")"
+	else
+		mv ${target} ${target}.bak
+		echo "$(green "Made old nvim config folder to ${target}.bak")"
+		git clone ${repo} ${target}
+	fi
+else
+	git clone ${repo} ${target}
+	echo "$(green "Cloned repo from ${repo}")"
 fi
-git clone ${repo} ${target}
 
 
 #### DONE ####
-echo -e "\n\nInstallation done!\n\n"
+echo -e "$(green "\n\nInstallation done!\n\n")"
 exit 0
 
