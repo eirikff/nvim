@@ -77,6 +77,12 @@ vim.defer_fn(function()
         },
       },
     },
+    refactor = {
+      highlight_definitions = {
+        enable = true,
+        clear_on_cursor_move = true,
+      },
+    }
   })
 
   TSCtx = require("treesitter-context")
