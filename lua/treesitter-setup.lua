@@ -82,4 +82,6 @@ vim.keymap.set("n", "[c", function()
   require("treesitter-context").go_to_context(vim.v.count1)
 end, { silent = true })
 
+vim.keymap.set("n", "<leader>tc", require("treesitter-context").toggle, { desc = "Toggle context" })
+
 -- vim: ts=2 sts=2 sw=2 et
