@@ -2,7 +2,7 @@
 -- See `:help nvim-treesitter`
 -- Defer Treesitter setup after first render to improve startup time of 'nvim {filename}'
 vim.defer_fn(function()
-  require('nvim-treesitter.configs').setup {
+  require('nvim-treesitter.configs').setup({
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = {
       'python',
@@ -75,13 +75,14 @@ vim.defer_fn(function()
         },
       },
     },
-  }
+  })
+
+  TSCtx = require("treesitter-context")
+  vim.keymap.set("n", "[c", function()
+    TSCtx.go_to_context(vim.v.count1)
+  end, { silent = true })
+
+  vim.keymap.set("n", "<leader>tc", TSCtx.toggle, { desc = "Toggle context" })
 end, 0)
-
-vim.keymap.set("n", "[c", function()
-  require("treesitter-context").go_to_context(vim.v.count1)
-end, { silent = true })
-
-vim.keymap.set("n", "<leader>tc", require("treesitter-context").toggle, { desc = "Toggle context" })
 
 -- vim: ts=2 sts=2 sw=2 et
