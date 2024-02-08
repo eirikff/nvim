@@ -86,6 +86,9 @@ vim.defer_fn(function()
   })
 
   TSCtx = require("treesitter-context")
+  TSCtx.setup({
+    multiline_threshold = 3
+  })
   vim.keymap.set("n", "[c", function()
     TSCtx.go_to_context(vim.v.count1)
   end, { silent = true })
