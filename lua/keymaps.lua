@@ -69,7 +69,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- Clear search highlights using F9
-vim.keymap.set('n', '<F9>', ':nohlsearch<CR>', { desc = 'Remove search highlights' })
+-- Toggle search highlights 
+vim.keymap.set('n', '<leader>ts', ':set hlsearch!<CR>', { desc = 'Toggle search highlights' })
+vim.keymap.set('n', '<F9>', ':set hlsearch!<CR>')  -- alternative keymap
 
 -- vim: ts=2 sts=2 sw=2 et

@@ -32,7 +32,7 @@ vim.o.swapfile = false
 vim.o.backup = false
 
 -- Set highlight on search
-vim.o.hlsearch = true
+vim.o.hlsearch = false
 
 -- Set incremental search
 vim.o.incsearch = true
