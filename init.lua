@@ -1,36 +1,38 @@
--- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+require("core")
 
--- [[ Install `lazy.nvim` plugin manager ]]
-require 'lazy-bootstrap'
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
--- [[ Configure plugins ]]
-require 'lazy-plugins'
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
+end
 
--- [[ Setting options ]]
-require 'options'
+vim.opt.runtimepath:prepend(lazypath)
 
--- [[ Basic Keymaps ]]
-require 'keymaps'
+-- Load plugins
+require("lazy").setup("plugins", {
+  checker = {
+    enabled = false, -- don't check for plugin updates
+  },
+  change_detection = {
+    enabled = true, -- check for changes in nvim configuration
+    notify = false, -- ... but don't print a message when one is detected
+  },
+  rocks = {
+    enabled = false,
+  }
+})
 
--- [[ Configure Telescope ]]
--- (fuzzy finder)
-require 'telescope-setup'
-
--- [[ Configure Treesitter ]]
--- (syntax parser for highlighting)
-require 'treesitter-setup'
-
--- [[ Configure LSP ]]
--- (Language Server Protocol)
-require 'lsp-setup'
-
--- [[ Configure nvim-cmp ]]
--- (completion)
-require 'cmp-setup'
-
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+-- Enables LSP setting files in the lsp/ directory
+local lsp_setting_path = vim.fn.stdpath("config") .. "/lua/plugins/"
+vim.opt.runtimepath:prepend(lsp_setting_path)
