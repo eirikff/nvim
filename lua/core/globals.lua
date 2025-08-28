@@ -10,6 +10,7 @@ local global = {
   is_windows = is_windows,
   path_delimiter = is_windows and ";" or ":",
   path_separator = is_windows and "\\" or "/",
+  snacks_animate = false,
 }
 
 for name, value in pairs(global) do
