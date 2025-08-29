@@ -57,3 +57,7 @@ vim.keymap.set("n", "<F9>", ":set hlsearch!<CR>")  -- alternative keymap
 
 vim.keymap.set("n", "<leader>tw", ":set wrap!<CR>", { desc = "Toggle wrap" })
 
+vim.keymap.set("n", "<leader>td", function()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle diagnostic messages" })
+
