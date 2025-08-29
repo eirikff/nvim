@@ -11,6 +11,7 @@ return {
         { "<leader>p", group = "Project" },
         { "<leader>s", group = "Search" },
         { "<leader>t", group = "Toggle" },
+        { "<leader>tg", group = "Toggles for git" },
         { "<leader>w", group = "Workspace" },
       },
     },
