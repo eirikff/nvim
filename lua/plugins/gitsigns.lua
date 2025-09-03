@@ -3,7 +3,10 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     opts = {
-      -- See `:help gitsigns.txt`
+      current_line_blame = true,
+      current_line_blame_opts = {
+        delay = 300, -- ms
+      },
       signs = {
         add = { text = "+" },
         change = { text = "~" },
