@@ -61,3 +61,4 @@ vim.keymap.set("n", "<leader>td", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle diagnostic messages" })
 
+vim.keymap.set("n", "<leader>gs", "<cmd>Git<CR>", { desc = "Open Git" })
