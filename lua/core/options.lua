@@ -22,6 +22,7 @@ local options = {
   termguicolors = true, -- NOTE: You should make sure your terminal supports this
   colorcolumn = "80,100", -- Add columns 
   scrolloff = 2, -- Add space at top/bottom when scrolling
+  formatoptions = "jcrql", -- See :h fo-table for details on each letter
 }
 
 for name, value in pairs(options) do
