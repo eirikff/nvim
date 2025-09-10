@@ -33,6 +33,3 @@ require("lazy").setup("plugins", {
   }
 })
 
--- Enables LSP setting files in the lsp/ directory
-local lsp_setting_path = vim.fn.stdpath("config") .. "/lua/plugins/"
-vim.opt.runtimepath:prepend(lsp_setting_path)
