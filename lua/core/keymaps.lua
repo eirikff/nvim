@@ -3,8 +3,9 @@
 -- use jk to leave insert mode  
 vim.keymap.set("i", "jk", "<Esc>")
 
--- open netrw file browser 
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "Open netrw file browser" })
+-- open netrw file browser
+vim.keymap.set("n", "<leader>pv", "<cmd>Lex<CR>", { desc = "Toggle netrw file browser in split" })
+vim.keymap.set("n", "<leader>pV", "<cmd>Ex<CR>", { desc = "Open netrw file browser" })
 
 -- move a chunk of text with capital J or K when highlighted
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
