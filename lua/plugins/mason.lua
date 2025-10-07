@@ -15,6 +15,7 @@ return {
           "clangd",
 	  "marksman",
           "lua_ls",
+          "bashls"
         },
 	-- auto install configured servers (with lspconfig)
 	automatic_installation = true,
