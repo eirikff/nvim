@@ -39,6 +39,7 @@ vim.keymap.set("n", "<leader>r", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 
 -- map esc to exit terminal mode
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
+vim.keymap.set("t", "jk", "<C-\\><C-n>")
 
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
