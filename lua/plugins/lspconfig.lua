@@ -36,7 +36,7 @@ return {
         keymap("n", "<leader>D", telescope_builtin.lsp_type_definitions, opts)
 
         opts.desc = "Document symbols"
-        keymap("n", "<leader>ds", telescope_builtin.lsp_document_symbols, opts)
+        keymap("n", "<leader>sd", telescope_builtin.lsp_document_symbols, opts)
 
         opts.desc = "Workspace symbols"
         keymap("n", "<leader>ws", telescope_builtin.lsp_dynamic_workspace_symbols, opts)
