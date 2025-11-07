@@ -4,8 +4,8 @@
 vim.keymap.set("i", "jk", "<Esc>")
 
 -- open netrw file browser
-vim.keymap.set("n", "<leader>pv", "<cmd>Lex<CR>", { desc = "Toggle netrw file browser in split" })
-vim.keymap.set("n", "<leader>pV", "<cmd>Ex<CR>", { desc = "Open netrw file browser" })
+vim.keymap.set("n", "<leader>pv", "<cmd>Ex<CR>", { desc = "Open netrw file browser" })
+vim.keymap.set("n", "<leader>pV", "<cmd>Lex<CR>", { desc = "Toggle netrw file browser in split" })
 
 -- move a chunk of text with capital J or K when highlighted
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
