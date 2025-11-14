@@ -12,7 +12,7 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
 -- keep cursor in place when using capital J
-vim.keymap.set("n", "J", "mzJ`z")
+vim.keymap.set("n", "J", "mzJg`z<cmd>delmark z<cr>")
 
 -- keep cursor in middle of screen when half page jumping
 vim.keymap.set("n", "<C-d>", "<C-d>zz")  -- jump down
