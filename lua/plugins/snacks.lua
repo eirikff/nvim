@@ -9,5 +9,9 @@ return {
     scope = { enabled = true },
     scroll = { enabled = true },
     statuscolumn = { enabled = true },
+    picker = {},
+    notifier = {
+      level = vim.log.levels.INFO,
+    },
   },
 }
