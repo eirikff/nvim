@@ -1,3 +1,15 @@
+local bb = require("core.bugbrain")
+
+local function try_get_bb_compile_commands()
+  local cc = bb.get_current_compile_commands(bb.get_root())
+
+  if cc == nil then
+    return ""
+  else
+    return cc
+  end
+end
+
 return {
   -- Set lualine as statusline
   "nvim-lualine/lualine.nvim",
@@ -18,7 +30,7 @@ return {
           newfile_status = true,
         },
       },
-      lualine_x = {"encoding", "filetype"},
+      lualine_x = { { try_get_bb_compile_commands }, "encoding", "filetype"},
       lualine_y = {"progress"},
       lualine_z = {"location"}
     },
