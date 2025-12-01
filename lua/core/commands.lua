@@ -1,4 +1,5 @@
 local command = vim.api.nvim_create_user_command
+local bb = require("core.bugbrain")
 
 command("TestCmd", function(args)
   vim.notify("This is a test command")
@@ -9,12 +10,10 @@ end, { desc = "Test command" })
 -- to that target's compile_commands.json.
 -- Made specifically for bugbrain and assumes bugbrain is in the bb root path
 command("BBSwitchCompileCommands", function()
-  local root_markers = { "_build", "compile_commands.json", ".clangd" }
-  local cwd = vim.api.nvim_buf_get_name(0)
-  local root = vim.fs.root(cwd, root_markers)
-
+  local root = bb.get_root()
   if root == nil then
-    vim.notify(string.format("Couldn't find root (cwd: %s)", cwd), vim.log.levels.WARN)
+    vim.notify(string.format("Couldn't find bugbrain root (cwd: %s)",
+               vim.api.nvim_buf_get_name(0)), vim.log.levels.WARN)
     return
   end
 
@@ -24,11 +23,7 @@ command("BBSwitchCompileCommands", function()
     return vim.fn.filereadable(cc) == 1
   end, vim.fn.readdir(build))
 
-  local current_cc = vim.fn.resolve(root .. "/compile_commands.json")
-  local current_target = ""
-  if vim.fn.filereadable(current_cc) == 1 then
-    current_target = vim.fs.basename(vim.fs.dirname(current_cc))
-  end
+  local current_target = bb.get_current_compile_commands(root)
 
   vim.ui.select(targets, {
     prompt = "Select target",
