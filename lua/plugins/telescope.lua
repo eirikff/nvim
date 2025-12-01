@@ -50,6 +50,19 @@ return {
     },
     opts = {
       extensions = { "fzf" },
+      pickers = {
+        lsp_document_symbols = {
+          symbol_width = 0.9,
+          symbol_type_width = 0.1,
+        },
+        lsp_references = {
+          fname_width = 0.5,
+          layout_strategy = "vertical",
+          layout_config = {
+            width = 0.9,
+          }
+        }
+      }
     },
     config = function(_, opts)
       local telescope = require("telescope")
