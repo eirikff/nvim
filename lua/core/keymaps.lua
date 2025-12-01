@@ -64,3 +64,5 @@ vim.keymap.set("n", "<leader>td", function()
 end, { desc = "Toggle diagnostic messages" })
 
 vim.keymap.set("n", "<leader>gs", "<cmd>Git<CR>", { desc = "Open Git" })
+
+vim.keymap.set("i", ";;", "<c-o>A;", { desc = "Append semi-colon to end of line in insert mode"})
