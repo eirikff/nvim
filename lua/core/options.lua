@@ -23,6 +23,14 @@ local options = {
   colorcolumn = "80,100", -- Add columns 
   scrolloff = 2, -- Add space at top/bottom when scrolling
   formatoptions = "jcrql", -- See :h fo-table for details on each letter
+  list = true,
+  listchars = {
+    tab = "› ",
+    trail = "•",
+    nbsp = "␣",
+    extends = "…",
+    precedes = "…",
+  }
 }
 
 for name, value in pairs(options) do

@@ -60,3 +60,14 @@ command("BBSwitchCompileCommands", function()
   end)
 end, { desc = "Switches bugbrain compile commands symlink" })
 
+
+local show_spaces = false
+vim.api.nvim_create_user_command("ToggleSpace", function()
+  show_spaces = not show_spaces
+
+  if show_spaces then
+    vim.opt.listchars:append({ space = "·" })
+  else
+    vim.opt.listchars:remove("space")
+  end
+end, { desc = "Toggles displaying space with a visible indicator" })
