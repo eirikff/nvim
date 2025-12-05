@@ -1,0 +1,3 @@
+-- local mini = require("mini")
+-- mini.setup({
+-- })
