@@ -42,7 +42,9 @@ return {
         keymap("n", "<leader>ws", telescope_builtin.lsp_dynamic_workspace_symbols, opts)
 
         opts.desc = "Hover documentation"
-        keymap("n", "K", vim.lsp.buf.hover, opts)
+        keymap("n", "K", function()
+          vim.lsp.buf.hover({ border = "rounded" })
+        end, opts)
       end,
     })
 
