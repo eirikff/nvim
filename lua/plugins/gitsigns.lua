@@ -7,6 +7,8 @@ return {
       current_line_blame_opts = {
         delay = 300, -- ms
       },
+      current_line_blame_formatter = "    <author>, <author_time:%R> - <summary> ",
+      current_line_blame_formatter_nc = "    <author> ",
       signs = {
         add = { text = "+" },
         change = { text = "~" },
