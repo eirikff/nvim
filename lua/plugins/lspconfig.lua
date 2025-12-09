@@ -14,6 +14,8 @@ return {
         local opts = { buffer = ev.buf, silent = true }
         local keymap = vim.keymap.set
 
+        print("Ran LspAttach")
+
         opts.desc = "Rename symbol with LSP"
         keymap("n", "<leader>rn", vim.lsp.buf.rename, opts)
 
@@ -44,6 +46,12 @@ return {
         opts.desc = "Hover documentation"
         keymap("n", "K", function()
           vim.lsp.buf.hover({ border = "rounded" })
+          vim.lsp.buf.hover({
+            close_events = { "CursorMoved", "BufLeave", "WinLeave", "LspDetach" },
+            -- BufLeave will automatically close the float anyway when trying
+            -- to focus it, so might as well not make it focusable.
+            focusable = false,
+          })
         end, opts)
       end,
     })
@@ -52,6 +60,18 @@ return {
 
     vim.lsp.config("*", {
       capabilities = capabilities
+    })
+
+    local mason = require("mason")
+
+    local home = vim.env.HOME
+    vim.lsp.config("clangd", {
+      cmd = { "clangd",
+        "--log=verbose",
+        "--pretty",
+        "--clang-tidy",
+        "--query-driver=" .. home .. "/.conan2/p/gcc-*/p/bin/arm-none-eabi-*",
+      }
     })
   end,
 }

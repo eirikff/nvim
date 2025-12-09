@@ -52,6 +52,12 @@ vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
 vim.keymap.set("n", "<leader>e", function()
   vim.diagnostic.open_float({ border = "rounded" })
+  vim.diagnostic.open_float({
+    close_events = { "CursorMoved", "BufLeave", "WinLeave", "LspDetach" },
+    -- BufLeave will automatically close the float anyway when trying
+    -- to focus it, so might as well not make it focusable.
+    focusable = false,
+  })
 end, { desc = "Open floating diagnostic message" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
