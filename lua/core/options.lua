@@ -30,7 +30,8 @@ local options = {
     nbsp = "␣",
     extends = "…",
     precedes = "…",
-  }
+  },
+  winborder = "rounded",
 }
 
 for name, value in pairs(options) do

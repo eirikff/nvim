@@ -45,7 +45,6 @@ return {
 
         opts.desc = "Hover documentation"
         keymap("n", "K", function()
-          vim.lsp.buf.hover({ border = "rounded" })
           vim.lsp.buf.hover({
             close_events = { "CursorMoved", "BufLeave", "WinLeave", "LspDetach" },
             -- BufLeave will automatically close the float anyway when trying
