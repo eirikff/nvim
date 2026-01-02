@@ -20,7 +20,11 @@ end
 vim.opt.runtimepath:prepend(lazypath)
 
 -- Load plugins
-require("lazy").setup("plugins", {
+require("lazy").setup({
+  spec = {
+    { import ="plugins" },
+    { import ="plugins.colorschemes" },
+  },
   checker = {
     enabled = false, -- don't check for plugin updates
   },
@@ -33,3 +37,4 @@ require("lazy").setup("plugins", {
   }
 })
 
+vim.cmd.colorscheme("everforest")
