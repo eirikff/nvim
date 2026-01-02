@@ -11,6 +11,10 @@ local global = {
   path_delimiter = is_windows and ";" or ":",
   path_separator = is_windows and "\\" or "/",
   snacks_animate = false,
+  loaded_perl_provider = 0,
+  loaded_python3_provider = 0,
+  loaded_ruby_provider = 0,
+  loaded_node_provider = 0,
 }
 
 for name, value in pairs(global) do
