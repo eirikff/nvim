@@ -71,3 +71,8 @@ vim.api.nvim_create_user_command("ToggleSpace", function()
     vim.opt.listchars:remove("space")
   end
 end, { desc = "Toggles displaying space with a visible indicator" })
+
+
+vim.api.nvim_create_user_command("CdBugbrain", function()
+  vim.cmd("cd /home/efalck/src/bugbrain/")
+end, { desc = "Change working directory to bugbrain" })
