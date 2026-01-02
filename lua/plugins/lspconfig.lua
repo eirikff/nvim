@@ -63,6 +63,9 @@ return {
         "--log=verbose",
         "--pretty",
         "--clang-tidy",
+        "--completion-style=detailed",
+        "--background-index",
+        "--enable-config",
         "--query-driver=" .. home .. "/.conan2/p/gcc-*/p/bin/arm-none-eabi-*",
       }
     })
