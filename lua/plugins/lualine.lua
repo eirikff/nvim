@@ -22,7 +22,15 @@ return {
     },
     sections = {
       lualine_a = {"mode"},
-      lualine_b = {"branch", "diff", "diagnostics"},
+      lualine_b = {"branch", "diff"},
+      lualine_c = { "diagnostics", { try_get_bb_compile_commands } },
+      lualine_x = { "encoding", "filetype"},
+      lualine_y = {"progress"},
+      lualine_z = {"location"}
+    },
+    winbar = {
+      lualine_a = {},
+      lualine_b = {},
       lualine_c = {
         {
           "filename",
@@ -30,9 +38,23 @@ return {
           newfile_status = true,
         },
       },
-      lualine_x = { { try_get_bb_compile_commands }, "encoding", "filetype"},
-      lualine_y = {"progress"},
-      lualine_z = {"location"}
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {}
+    },
+    inactive_winbar = {
+      lualine_a = {},
+      lualine_b = {},
+      lualine_c = {
+        {
+          "filename",
+          path = 1,
+          newfile_status = true,
+        },
+      },
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {}
     },
   },
 }
