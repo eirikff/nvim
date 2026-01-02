@@ -67,4 +67,6 @@ end, { desc = "Toggle diagnostic messages" })
 
 vim.keymap.set("n", "<leader>gs", "<cmd>Git<CR>", { desc = "Open Git" })
 
-vim.keymap.set("i", ";;", "<c-o>A;", { desc = "Append semi-colon to end of line in insert mode"})
+vim.keymap.set("i", ";;", "<c-o>A;", { desc = "Append semi-colon to end of line in insert mode" })
+
+vim.keymap.set("n", "<leader>fc", require("core.utils").close_floats, { desc = "Close open floats" })

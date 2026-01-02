@@ -8,8 +8,9 @@ return {
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
     local telescope_builtin = require("telescope.builtin")
 
+    local augroup = vim.api.nvim_create_augroup("UserLspConfig", {})
     vim.api.nvim_create_autocmd("LspAttach", {
-      group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+      group = augroup,
       callback = function(ev)
         local opts = { buffer = ev.buf, silent = true }
         local keymap = vim.keymap.set
@@ -44,14 +45,7 @@ return {
         keymap("n", "<leader>ws", telescope_builtin.lsp_dynamic_workspace_symbols, opts)
 
         opts.desc = "Hover documentation"
-        keymap("n", "K", function()
-          vim.lsp.buf.hover({
-            close_events = { "CursorMoved", "BufLeave", "WinLeave", "LspDetach" },
-            -- BufLeave will automatically close the float anyway when trying
-            -- to focus it, so might as well not make it focusable.
-            focusable = false,
-          })
-        end, opts)
+        keymap("n", "K", vim.lsp.buf.hover, opts)
       end,
     })
 
