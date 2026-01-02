@@ -8,6 +8,7 @@ return {
     {
       "L3MON4D3/LuaSnip", -- snippet engine
       dependencies = { "rafamadriz/friendly-snippets" }, -- useful snippets
+      build = "make install_jsregexp",
     },
     {
       "windwp/nvim-autopairs",
