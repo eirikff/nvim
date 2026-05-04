@@ -82,6 +82,8 @@ return {
       vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<cr>", { desc = "Search by Grep on Git Root" })
       vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "Search Diagnostics" })
       vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "Search Resume" })
+      vim.keymap.set("n", "<leader>sc", [["cyiw<cmd>Telescope live_grep<cr><c-r>c]], { desc = "Live grep word under cursor" })
+      vim.keymap.set("v", "<leader>sc", [["cy<cmd>Telescope live_grep<cr><c-r>c]], { desc = "Live grep visual selection" })
 
       vim.keymap.set("n", "<leader>/", function()
         require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown {

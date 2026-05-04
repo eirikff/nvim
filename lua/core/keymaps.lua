@@ -70,3 +70,6 @@ vim.keymap.set("n", "<leader>gs", "<cmd>Git<CR>", { desc = "Open Git" })
 vim.keymap.set("i", ";;", "<c-o>A;", { desc = "Append semi-colon to end of line in insert mode" })
 
 vim.keymap.set("n", "<leader>fc", require("core.utils").close_floats, { desc = "Close open floats" })
+
+vim.keymap.set("n", "<leader><c-g>", "<cmd>CopyRelPath<cr>", { desc = "Copy relative path of current buffer to system clipboard" })
+vim.keymap.set("n", "<leader>n<c-g>", "<cmd>CopyRelPath!<cr>", { desc = "Copy relative path with line number of current buffer to system clipboard" })

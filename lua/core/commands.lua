@@ -76,3 +76,23 @@ end, { desc = "Toggles displaying space with a visible indicator" })
 vim.api.nvim_create_user_command("CdBugbrain", function()
   vim.cmd("cd /home/efalck/src/bugbrain/")
 end, { desc = "Change working directory to bugbrain" })
+
+vim.api.nvim_create_user_command("CopyRelPath", function(args)
+  local path = vim.fn.expand("%")
+  if args.bang == true then
+    local linenumber = vim.api.nvim_win_get_cursor(0)
+    path = path .. ":" .. linenumber[1]
+  end
+  vim.fn.setreg("+", path)
+  vim.notify('Copied "' .. path .. '" to the clipboard!')
+end, { desc = "Copy relative path of current bufer. Append ! to include line number", bang = true })
+
+vim.api.nvim_create_user_command("CopyAbsPath", function(args)
+  local path = vim.fn.expand("%:p")
+  if args.bang == true then
+    local linenumber = vim.api.nvim_win_get_cursor(0)
+    path = path .. ":" .. linenumber[1]
+  end
+  vim.fn.setreg("+", path)
+  vim.notify('Copied "' .. path .. '" to the clipboard!')
+end, { desc = "Copy absolute path of current bufer. Append ! to include line number", bang = true })

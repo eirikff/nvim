@@ -29,29 +29,29 @@ return {
       lualine_z = {"location"}
     },
     winbar = {
-      lualine_a = {},
-      lualine_b = {},
-      lualine_c = {
+      lualine_a = {
         {
           "filename",
           path = 1,
           newfile_status = true,
         },
       },
+      lualine_b = {},
+      lualine_c = {},
       lualine_x = {},
       lualine_y = {},
       lualine_z = {}
     },
     inactive_winbar = {
-      lualine_a = {},
-      lualine_b = {},
-      lualine_c = {
+      lualine_a = {
         {
           "filename",
           path = 1,
           newfile_status = true,
         },
       },
+      lualine_b = {},
+      lualine_c = {},
       lualine_x = {},
       lualine_y = {},
       lualine_z = {}
