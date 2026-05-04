@@ -15,13 +15,16 @@ vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_node_provider = 0
 
+vim.g.netrw_liststyle = 0
+vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
+
 vim.keymap.set("i", "jk", "<Esc>")
 
 
 --------------------------------------------------------------------------------
 -- OPTIONS
 --------------------------------------------------------------------------------
-vim.opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor25" -- cursor to always be block
+vim.opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor25" -- block in normal, bar in insert, underline in replace
 vim.opt.cursorline = true -- highlight current line
 vim.opt.number = true -- Make line numbers default
 vim.opt.relativenumber = true
@@ -29,17 +32,16 @@ vim.opt.mouse = "a" -- Enable mouse mode
 vim.opt.breakindent = true
 vim.opt.wrap = false
 vim.opt.undofile = true -- Save undo history
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+vim.opt.undodir = vim.env.HOME .. "/.vim/undodir"
 vim.opt.swapfile = false -- Disable swapfiles
 vim.opt.backup = false
-vim.opt.hlsearch = false -- enable highlight on search
-vim.opt.incsearch = true -- enable incremental search
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
 vim.opt.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
 vim.opt.smartcase = true
 vim.opt.signcolumn = "yes" -- Keep signcolumn on by default
 vim.opt.updatetime = 250 -- Decrease update time
 vim.opt.timeoutlen = 300
-vim.opt.completeopt = "menuone,noselect" -- to have a better completion experience
 vim.opt.termguicolors = true -- NOTE: You should make sure your terminal supports this
 vim.opt.colorcolumn = "80,100" -- Add columns
 vim.opt.scrolloff = 2 -- Add space at top/bottom when scrolling
@@ -58,17 +60,26 @@ vim.opt.expandtab = true    -- use spaces instead of tab characters
 vim.opt.tabstop = 4         -- a literal tab renders as 4 columns wide
 vim.opt.softtabstop = -1    -- -1 = copy shiftwidth, pressing <Tab> in insert mode inserts 4 spaces worth
 vim.opt.shiftwidth = 4      -- >> and << shift by 4 spaces
-vim.opt.smarttab = true     -- (default on) <Tab> at line start uses shiftwidth
 
-vim.cmd("let g:netrw_liststyle = 0") -- 0 = normal, 3 = tree
-vim.cmd("let g:netrw_bufsettings = 'noma nomod nonu nobl nowrap ro rnu'") -- relative numbering
+-- Default to have all folds open at start
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
 
 
 --------------------------------------------------------------------------------
 -- PLUGINS
 --------------------------------------------------------------------------------
 local gh = function(repo) return 'https://github.com/' .. repo end
-local pd = function(repo) return "git@gitlab.inne.proxdynamics.com:" .. repo .. ".git" end
+
+vim.api.nvim_create_autocmd("PackChanged", {
+  callback = function(ev)
+    local d = ev.data
+    if d.spec.name == "telescope-fzf-native.nvim"
+       and (d.kind == "install" or d.kind == "update") then
+      vim.system({ "make" }, { cwd = d.path })
+    end
+  end,
+})
 
 vim.pack.add({
   -- Colorschemes
@@ -79,7 +90,6 @@ vim.pack.add({
   { src = gh("nvim-mini/mini.nvim") },
   { src = gh("nvim-lualine/lualine.nvim") },
   { src = gh("tpope/vim-sleuth") },
-  { src = gh("hiphish/rainbow-delimiters.nvim") },
 
   -- Git
   { src = gh("lewis6991/gitsigns.nvim") },
@@ -87,28 +97,40 @@ vim.pack.add({
   -- LSP & Mason
   { src = gh("neovim/nvim-lspconfig") },
   { src = gh("mason-org/mason.nvim") },
+  { src = gh("mason-org/mason-lspconfig.nvim") },
 
   -- Completion
-  { src = "https://github.com/hrsh7th/nvim-cmp" },
-  { src = "https://github.com/hrsh7th/cmp-nvim-lsp" },
-  { src = "https://github.com/hrsh7th/cmp-buffer" },
-  { src = "https://github.com/hrsh7th/cmp-path" },
+  { src = gh("hrsh7th/nvim-cmp") },
+  { src = gh("hrsh7th/cmp-nvim-lsp") },
+  { src = gh("hrsh7th/cmp-buffer") },
+  { src = gh("hrsh7th/cmp-path") },
 
 
   -- Telescope
   { src = gh("nvim-lua/plenary.nvim") },
-  { src = gh("nvim-telescope/telescope.nvim"), version = "v0.2.0" },
+  { src = gh("nvim-telescope/telescope.nvim") },
+  { src = gh("nvim-telescope/telescope-fzf-native.nvim") },
 
   -- Treesitter
   { src = gh("nvim-treesitter/nvim-treesitter"), version = "main" },
 
   -- Files / data
   { src = gh("hat0uma/csvview.nvim") },
-
-  -- Custom
-  { src = pd("efalck/bugbrain.nvim") },
 })
 
+vim.uv.getaddrinfo("gitlab.inne.proxdynamics.com", nil, {}, function(err, _)
+  vim.schedule(function()
+    local pd = function(repo) return "git@gitlab.inne.proxdynamics.com:" .. repo .. ".git" end
+
+    if err then
+      vim.notify("Unable to reach internal gitlab; skipping bugbrain.nvim", vim.log.levels.WARN)
+    else
+      vim.pack.add({
+        { src = pd("efalck/bugbrain.nvim") },
+      })
+    end
+  end)
+end)
 
 --------------------------------------------------------------------------------
 -- COLORSCHEME
@@ -141,14 +163,12 @@ require("snacks").setup({
 
 
 local function try_get_bb_compile_commands()
-  local bb = require("bugbrain.util")
-  local cc = bb.get_current_compile_commands(bb.get_root())
-
-  if cc == nil then
+  local ok, bb = pcall(require, "bugbrain.util")
+  if not ok then
     return ""
-  else
-    return cc
   end
+
+  return bb.get_current_compile_commands(bb.get_root()) or ""
 end
 
 require("lualine").setup({
@@ -212,6 +232,8 @@ require("telescope").setup({
   }
 })
 
+require("telescope").load_extension("fzf")
+
 local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<leader>?", builtin.oldfiles, { desc = "Find recently opened files" })
 vim.keymap.set("n", "<leader><space>", builtin.buffers, { desc = "Find existing buffers" })
@@ -221,11 +243,81 @@ vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "Search Files" })
 vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "Search Help" })
 vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "Search current Word" })
 vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "Search by Grep" })
-vim.keymap.set("n", "<leader>sG", ":LiveGrepGitRoot<cr>", { desc = "Search by Grep on Git Root" })
-vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "Search Diagnostics" })
 vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "Search Resume" })
 vim.keymap.set("n", "<leader>sc", [["cyiw<cmd>Telescope live_grep<cr><c-r>c]], { desc = "Live grep word under cursor" })
 vim.keymap.set("v", "<leader>sc", [["cy<cmd>Telescope live_grep<cr><c-r>c]], { desc = "Live grep visual selection" })
+
+
+require("gitsigns").setup({
+  current_line_blame = true,
+  current_line_blame_opts = {
+    delay = 300, -- ms
+  },
+  current_line_blame_formatter = "    <author>, <author_time:%R> - <summary> ",
+  current_line_blame_formatter_nc = "    <author> ",
+  signs = {
+    add          = { text = "+" },
+    change       = { text = "~" },
+    delete       = { text = "_" },
+    topdelete    = { text = "‾" },
+    changedelete = { text = "~" },
+    untracked    = { text = "┆" },
+  },
+  signs_staged = {
+    add          = { text = "+" },
+    change       = { text = "~" },
+    delete       = { text = "_" },
+    topdelete    = { text = "‾" },
+    changedelete = { text = "~" },
+    untracked    = { text = "┆" },
+  },
+  on_attach = function(bufnr)
+    local gs = require("gitsigns")
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation
+    map('n', ']h', function()
+      if vim.wo.diff then
+        vim.cmd("normal! ]c")
+      else
+        gs.nav_hunk('next')
+      end
+    end, { desc = "Jump to next hunk" })
+
+    map('n', '[h', function()
+      if vim.wo.diff then
+        vim.cmd("normal! [c")
+      else
+        gs.nav_hunk('prev')
+      end
+    end, { desc = "Jump to previous hunk" })
+
+    -- visual mode
+    map("v", "<leader>hs", function()
+      gs.stage_hunk { vim.fn.line ".", vim.fn.line "v" }
+    end, { desc = "stage git hunk" })
+    map("v", "<leader>hr", function()
+      gs.reset_hunk { vim.fn.line ".", vim.fn.line "v" }
+    end, { desc = "reset git hunk" })
+    -- normal mode
+    map("n", "<leader>hs", gs.stage_hunk, { desc = "git stage hunk" })
+    map("n", "<leader>hr", gs.reset_hunk, { desc = "git reset hunk" })
+    map("n", "<leader>hb", function()
+      gs.blame_line { full = false }
+    end, { desc = "git blame line" })
+    map("n", "<leader>hd", gs.diffthis, { desc = "git diff against index" })
+
+    -- Toggles
+    map("n", "<leader>tgb", gs.toggle_current_line_blame, { desc = "toggle git blame line" })
+  end,
+})
+
+require('csvview').setup()
 
 
 --------------------------------------------------------------------------------
@@ -275,22 +367,41 @@ cmp.setup({
   },
 })
 
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+vim.lsp.config("*", { capabilities = capabilities })
 
 --------------------------------------------------------------------------------
 --- LSP
 --------------------------------------------------------------------------------
-require("mason").setup()
-
 vim.lsp.config("clangd", {
   cmd = { "clangd",
-    "--log=verbose",
-    "--pretty",
     "--clang-tidy",
     "--completion-style=detailed",
     "--background-index",
     "--enable-config",
     "--query-driver=" .. vim.env.HOME .. "/.conan2/p/gcc-*/p/bin/arm-none-eabi-*",
   }
+})
+
+vim.lsp.config("lua_ls", {
+  settings = {
+    Lua = {
+      workspace = {
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+    },
+  },
+})
+
+require("mason").setup()
+require("mason-lspconfig").setup({
+  ensure_installed = {
+    "clangd",
+    "pyright",
+    "lua_ls",
+    "bashls",
+  },
+  automatic_enable = true,
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -331,21 +442,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-vim.lsp.enable("clangd")
-vim.lsp.enable("pyright")
-vim.lsp.enable("lua_ls")
-vim.lsp.enable("bashls")
-vim.lsp.enable("marksman")
-vim.lsp.enable("gopls")
-vim.lsp.enable("cmake")
-vim.lsp.enable("ts_ls")
-
 
 --------------------------------------------------------------------------------
 --- TREESITTER
 --------------------------------------------------------------------------------
-local ts = require("nvim-treesitter")
-ts.install({
+require("nvim-treesitter").install({
   "asm",
   "bash",
   "c",
@@ -420,16 +521,17 @@ ts.install({
 
 vim.api.nvim_create_autocmd("FileType", {
   callback = function(event)
-    -- Start Tree-sitter parsing and highlighting for the current buffer.
-    -- We use 'pcall' so it fails silently if you open a filetype without a parser.
-    pcall(vim.treesitter.start, event.buf)
+    -- Skip special buffers
+    if vim.bo[event.buf].buftype ~= "" then return end
 
-    -- Optional: Enable structural folding based on Tree-sitter logic
-    vim.opt.foldlevel = 99
-    vim.opt.foldlevelstart = 99
-    vim.wo.foldmethod = "expr"
-    vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    local lang = vim.treesitter.language.get_lang(vim.bo[event.buf].filetype)
+    if not lang or not vim.treesitter.language.add(lang) then return end
+
+    vim.treesitter.start(event.buf)
+    vim.bo[event.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
   end,
 })
 
@@ -439,9 +541,8 @@ vim.api.nvim_create_autocmd("FileType", {
 --------------------------------------------------------------------------------
 -- highlight yanked texted
 vim.api.nvim_create_autocmd("TextYankPost", {
-  pattern = "*",
   callback = function()
-    vim.highlight.on_yank({ timeout = 200, })
+    vim.hl.on_yank({ timeout = 200, })
   end,
 })
 
@@ -452,7 +553,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     if vim.bo[buf].buftype ~= "" then return end
 
     local view = vim.fn.winsaveview()
-    local gs = require("gitsigns")
+    local gs = package.loaded.gitsigns
     local hunks = gs and gs.get_hunks(buf)
 
     if hunks == nil then
@@ -507,7 +608,7 @@ vim.api.nvim_create_user_command("CopyRelPath", function(args)
   end
   vim.fn.setreg("+", path)
   vim.notify('Copied "' .. path .. '" to the clipboard!')
-end, { desc = "Copy relative path of current bufer. Append ! to include line number", bang = true })
+end, { desc = "Copy relative path of current buffer. Append ! to include line number", bang = true })
 
 
 vim.api.nvim_create_user_command("CopyAbsPath", function(args)
@@ -518,7 +619,7 @@ vim.api.nvim_create_user_command("CopyAbsPath", function(args)
   end
   vim.fn.setreg("+", path)
   vim.notify('Copied "' .. path .. '" to the clipboard!')
-end, { desc = "Copy absolute path of current bufer. Append ! to include line number", bang = true })
+end, { desc = "Copy absolute path of current buffer. Append ! to include line number", bang = true })
 
 
 --------------------------------------------------------------------------------
@@ -545,7 +646,7 @@ vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
 -- let us keep copied text when pasting over highlighted text
-vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Keep yanked texted when pasting over highlighted text" })
+vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Keep yanked text when pasting over highlighted text" })
 
 -- let us copy text directly to the system clipboard
 vim.keymap.set({"n", "v"}, "<leader>y", [["+y]], { desc = "Copy text to system clipboard" })
@@ -567,24 +668,19 @@ vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = 1, float = true }) end,
-  { desc = "Go to previous diagnostic message" })
-vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = -1, float = true }) end,
-  { desc = "Go to next diagnostic message" })
+vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Go to previous diagnostic message" })
+vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Go to next diagnostic message" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
 -- Toggle search highlights
-vim.keymap.set("n", "<leader>ts", ":set hlsearch!<CR>", { desc = "Toggle search highlights" })
-vim.keymap.set("n", "<F9>", ":set hlsearch!<CR>")  -- alternative keymap
+vim.keymap.set("n", "<leader>ts", "<cmd>set hlsearch!<cr>", { desc = "Toggle search highlights" })
+vim.keymap.set("n", "<F9>", "<cmd>set hlsearch!<cr>")  -- alternative keymap
 
-vim.keymap.set("n", "<leader>tw", ":set wrap!<CR>", { desc = "Toggle wrap" })
+vim.keymap.set("n", "<leader>tw", "<cmd>set wrap!<cr>", { desc = "Toggle wrap" })
 
 vim.keymap.set("n", "<leader>td", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle diagnostic messages" })
-
-vim.keymap.set("n", "<leader>gs", "<cmd>Git<CR>", { desc = "Open Git" })
 
 vim.keymap.set("i", ";;", "<c-o>A;", { desc = "Append semi-colon to end of line in insert mode" })
 
