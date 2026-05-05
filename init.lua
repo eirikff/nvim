@@ -100,19 +100,24 @@ vim.pack.add({
   { src = gh("hat0uma/csvview.nvim") },
 })
 
-vim.uv.getaddrinfo("gitlab.inne.proxdynamics.com", nil, {}, function(err, _)
-  vim.schedule(function()
-    local pd = function(repo) return "git@gitlab.inne.proxdynamics.com:" .. repo .. ".git" end
+local bb_dir = vim.fn.stdpath("data") .. "/site/pack/core/opt/bugbrain.nvim"
+local bb_installed = vim.fn.isdirectory(bb_dir) == 1
 
-    if err then
-      vim.notify("Unable to reach internal gitlab; skipping bugbrain.nvim", vim.log.levels.WARN)
-    else
-      vim.pack.add({
-        { src = pd("efalck/bugbrain.nvim") },
-      })
-    end
+if bb_installed then
+  -- Already on disk: register synchronously, no DNS check needed
+  vim.pack.add({ { src = "git@gitlab.inne.proxdynamics.com:efalck/bugbrain.nvim.git" } })
+else
+  -- Not on disk: only attempt clone if we can reach the internal gitlab
+  vim.uv.getaddrinfo("gitlab.inne.proxdynamics.com", nil, {}, function(err, _)
+    vim.schedule(function()
+      if err then
+        vim.notify("Unable to reach internal gitlab; bugbrain.nvim not installed", vim.log.levels.WARN)
+      else
+        vim.pack.add({ { src = "git@gitlab.inne.proxdynamics.com:efalck/bugbrain.nvim.git" } })
+      end
+    end)
   end)
-end)
+end
 
 --------------------------------------------------------------------------------
 -- COLORSCHEME
