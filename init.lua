@@ -18,8 +18,6 @@ vim.g.loaded_node_provider = 0
 vim.g.netrw_liststyle = 0
 vim.g.netrw_bufsettings = "noma nomod nonu nobl nowrap ro rnu"
 
-vim.keymap.set("i", "jk", "<Esc>")
-
 
 --------------------------------------------------------------------------------
 -- OPTIONS
@@ -143,6 +141,7 @@ require("snacks").setup({
   notifier = {
     level = vim.log.levels.INFO,
   },
+  toggle = {},
 })
 
 
@@ -572,65 +571,26 @@ end, { desc = "Copy absolute path of current buffer. Append ! to include line nu
 --------------------------------------------------------------------------------
 --- KEYMAPS
 --------------------------------------------------------------------------------
-
--- open netrw file browser
+vim.keymap.set("i", "jk", "<Esc>")
 vim.keymap.set("n", "<leader>pv", "<cmd>Ex<CR>", { desc = "Open netrw file browser" })
-vim.keymap.set("n", "<leader>pV", "<cmd>Lex<CR>", { desc = "Toggle netrw file browser in split" })
-
--- move a chunk of text with capital J or K when highlighted
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-
--- keep cursor in place when using capital J
-vim.keymap.set("n", "J", "mzJg`z<cmd>delmark z<cr>")
-
--- keep cursor in middle of screen when half page jumping
-vim.keymap.set("n", "<C-d>", "<C-d>zz")  -- jump down
-vim.keymap.set("n", "<C-u>", "<C-u>zz")  -- jump up
-
--- keep search terms in the middle of the screen when jumping
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
-
--- let us keep copied text when pasting over highlighted text
-vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Keep yanked text when pasting over highlighted text" })
-
--- let us copy text directly to the system clipboard
-vim.keymap.set({"n", "v"}, "<leader>y", [["+y]], { desc = "Copy text to system clipboard" })
-
--- disable the annoying thing that comes up when you press Q accidentally
-vim.keymap.set("n", "Q", "<nop>")
-
--- search and replace the word the cursor is on
-vim.keymap.set("n", "<leader>r", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Search and replace word under the cursor" })
-
--- map esc to exit terminal mode
-vim.keymap.set("t", "<Esc>", "<C-\\><C-n>")
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>") -- map esc to exit terminal mode
 vim.keymap.set("t", "jk", "<C-\\><C-n>")
-
+vim.keymap.set("n", "J", "mzJg`z<cmd>delmark z<cr>") -- keep cursor in place when using capital J
+vim.keymap.set("n", "n", "nzzzv") -- keep search term in middle of screen
+vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
-
+vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Keep yanked text when pasting over highlighted text" })
+vim.keymap.set({"n", "v"}, "<leader>y", [["+y]], { desc = "Copy text to system clipboard" })
 -- Remap for dealing with word wrap
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- Diagnostic keymaps
 vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, { desc = "Go to previous diagnostic message" })
 vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, { desc = "Go to next diagnostic message" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
-
--- Toggle search highlights
-vim.keymap.set("n", "<leader>ts", "<cmd>set hlsearch!<cr>", { desc = "Toggle search highlights" })
-vim.keymap.set("n", "<F9>", "<cmd>set hlsearch!<cr>")  -- alternative keymap
-
-vim.keymap.set("n", "<leader>tw", "<cmd>set wrap!<cr>", { desc = "Toggle wrap" })
-
-vim.keymap.set("n", "<leader>td", function()
-  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
-end, { desc = "Toggle diagnostic messages" })
-
-vim.keymap.set("i", ";;", "<c-o>A;", { desc = "Append semi-colon to end of line in insert mode" })
-
+Snacks.toggle.diagnostics():map("<leader>td")
+Snacks.toggle.option("hlsearch"):map("<leader>ts")
+Snacks.toggle.option("wrap"):map("<leader>tw")
 vim.keymap.set("n", "<leader><c-g>", "<cmd>CopyRelPath<cr>", { desc = "Copy relative path of current buffer to system clipboard" })
 vim.keymap.set("n", "<leader>n<c-g>", "<cmd>CopyRelPath!<cr>", { desc = "Copy relative path with line number of current buffer to system clipboard" })
 
