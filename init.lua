@@ -71,16 +71,6 @@ vim.opt.foldlevelstart = 99
 --------------------------------------------------------------------------------
 local gh = function(repo) return 'https://github.com/' .. repo end
 
-vim.api.nvim_create_autocmd("PackChanged", {
-  callback = function(ev)
-    local d = ev.data
-    if d.spec.name == "telescope-fzf-native.nvim"
-       and (d.kind == "install" or d.kind == "update") then
-      vim.system({ "make" }, { cwd = d.path })
-    end
-  end,
-})
-
 vim.pack.add({
   -- Colorschemes
   { src = gh("sainnhe/everforest") },
@@ -104,12 +94,6 @@ vim.pack.add({
   { src = gh("hrsh7th/cmp-nvim-lsp") },
   { src = gh("hrsh7th/cmp-buffer") },
   { src = gh("hrsh7th/cmp-path") },
-
-
-  -- Telescope
-  { src = gh("nvim-lua/plenary.nvim") },
-  { src = gh("nvim-telescope/telescope.nvim") },
-  { src = gh("nvim-telescope/telescope-fzf-native.nvim") },
 
   -- Treesitter
   { src = gh("nvim-treesitter/nvim-treesitter"), version = "main" },
@@ -216,36 +200,15 @@ require("lualine").setup({
   },
 })
 
-require("telescope").setup({
-  pickers = {
-    lsp_document_symbols = {
-      symbol_width = 0.9,
-      symbol_type_width = 0.1,
-    },
-    lsp_references = {
-      fname_width = 0.5,
-      layout_strategy = "vertical",
-      layout_config = {
-        width = 0.9,
-      }
-    }
-  }
-})
-
-require("telescope").load_extension("fzf")
-
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>?", builtin.oldfiles, { desc = "Find recently opened files" })
-vim.keymap.set("n", "<leader><space>", builtin.buffers, { desc = "Find existing buffers" })
-vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "Search Select Telescope" })
-vim.keymap.set("n", "<leader>gf", builtin.git_files, { desc = "Search Git Files" })
-vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "Search Files" })
-vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "Search Help" })
-vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "Search current Word" })
-vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "Search by Grep" })
-vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "Search Resume" })
-vim.keymap.set("n", "<leader>sc", [["cyiw<cmd>Telescope live_grep<cr><c-r>c]], { desc = "Live grep word under cursor" })
-vim.keymap.set("v", "<leader>sc", [["cy<cmd>Telescope live_grep<cr><c-r>c]], { desc = "Live grep visual selection" })
+local pick = Snacks.picker
+vim.keymap.set("n", "<leader>?",       pick.recent,      { desc = "Pick recent files" })
+vim.keymap.set("n", "<leader><space>", pick.buffers,     { desc = "Pick open buffers" })
+vim.keymap.set("n", "<leader>sf",      pick.files,       { desc = "Pick files from workspace" })
+vim.keymap.set("n", "<leader>sg",      pick.grep,        { desc = "Grep in workspace" })
+vim.keymap.set("n", "<leader>sw",      pick.grep_word,   { desc = "Grep word under cursor" })
+vim.keymap.set("n", "<leader>sd",      pick.diagnostics, { desc = "Pick diagnostics" })
+vim.keymap.set("n", "<leader>sr",      pick.resume,      { desc = "Resume last search" })
+vim.keymap.set("n", "<leader>gf",      pick.git_files,   { desc = "Pick git tracked files in workspace" })
 
 
 require("gitsigns").setup({
@@ -407,38 +370,22 @@ require("mason-lspconfig").setup({
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", {}),
   callback = function(ev)
-    local builtin = require("telescope.builtin")
-    local opts = { buffer = ev.buf, silent = true }
+    local function nmap(keys, func, desc)
+      local opts = { buffer = ev.buf, silent = true, desc = desc }
+      vim.keymap.set("n", keys, func, opts)
+    end
 
-    opts.desc = "Rename symbol with LSP"
-    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+    nmap("K",          vim.lsp.buf.hover,          "Hover documentation")
+    nmap("gD",         vim.lsp.buf.declaration,    "Goto declaration")
+    nmap("<leader>rn", vim.lsp.buf.rename,         "Rename symbol with LSP")
+    nmap("<leader>ca", vim.lsp.buf.code_action,    "Code action")
 
-    opts.desc = "Code action"
-    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-
-    opts.desc = "Goto declaration"
-    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-
-    opts.desc = "Goto definition"
-    vim.keymap.set("n", "gd", builtin.lsp_definitions, opts)
-
-    opts.desc = "Goto references"
-    vim.keymap.set("n", "gr", builtin.lsp_references, opts)
-
-    opts.desc = "Goto implementations"
-    vim.keymap.set("n", "gi", builtin.lsp_implementations, opts)
-
-    opts.desc = "Type definitions"
-    vim.keymap.set("n", "<leader>D", builtin.lsp_type_definitions, opts)
-
-    opts.desc = "Document symbols"
-    vim.keymap.set("n", "<leader>sd", builtin.lsp_document_symbols, opts)
-
-    opts.desc = "Workspace symbols"
-    vim.keymap.set("n", "<leader>ws", builtin.lsp_dynamic_workspace_symbols, opts)
-
-    opts.desc = "Hover documentation"
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+    nmap("gd",         pick.lsp_definitions,       "Goto definition")
+    nmap("gr",         pick.lsp_references,        "Goto references")
+    nmap("gi",         pick.lsp_implementations,   "Goto implementations")
+    nmap("<leader>D",  pick.lsp_type_definitions,  "Type definitions")
+    nmap("<leader>sd", pick.lsp_symbols,           "Document symbols")
+    nmap("<leader>ws", pick.lsp_workspace_symbols, "Workspace symbols")
   end,
 })
 
