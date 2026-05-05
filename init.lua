@@ -149,6 +149,17 @@ require("snacks").setup({
   toggle = {},
 })
 
+require('mini.sessions').setup({
+  autoread = true,
+  verbose = {
+    read = true,
+    write = true,
+    delete = true
+  },
+})
+
+require('mini.splitjoin').setup()
+require('mini.pairs').setup()
 
 local function try_get_bb_compile_commands()
   local ok, bb = pcall(require, "bugbrain.util")
