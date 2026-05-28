@@ -565,7 +565,7 @@ end, { desc = "Toggles displaying space with a visible indicator" })
 
 
 vim.api.nvim_create_user_command("CopyRelPath", function(args)
-  local path = vim.fn.expand("%")
+  local path = vim.fn.expand("%:.")
   if args.bang == true then
     local linenumber = vim.api.nvim_win_get_cursor(0)
     path = path .. ":" .. linenumber[1]
