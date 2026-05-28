@@ -149,6 +149,17 @@ require("snacks").setup({
   toggle = {},
 })
 
+local pick = Snacks.picker
+vim.keymap.set("n", "<leader>?",       function() pick.recent() end,      { desc = "Pick recent files" })
+vim.keymap.set("n", "<leader><space>", function() pick.buffers() end,     { desc = "Pick open buffers" })
+vim.keymap.set("n", "<leader>sf",      function() pick.files() end,       { desc = "Pick files from workspace" })
+vim.keymap.set("n", "<leader>sg",      function() pick.grep() end,        { desc = "Grep in workspace" })
+vim.keymap.set("n", "<leader>sw",      function() pick.grep_word() end,   { desc = "Grep word under cursor" })
+vim.keymap.set("n", "<leader>sd",      function() pick.diagnostics() end, { desc = "Pick diagnostics" })
+vim.keymap.set("n", "<leader>sr",      function() pick.resume() end,      { desc = "Resume last search" })
+vim.keymap.set("n", "<leader>gf",      function() pick.git_files() end,   { desc = "Pick git tracked files in workspace" })
+
+
 require('mini.sessions').setup({
   autoread = true,
   verbose = {
@@ -214,16 +225,6 @@ require("lualine").setup({
     lualine_z = {}
   },
 })
-
-local pick = Snacks.picker
-vim.keymap.set("n", "<leader>?",       pick.recent,      { desc = "Pick recent files" })
-vim.keymap.set("n", "<leader><space>", pick.buffers,     { desc = "Pick open buffers" })
-vim.keymap.set("n", "<leader>sf",      pick.files,       { desc = "Pick files from workspace" })
-vim.keymap.set("n", "<leader>sg",      pick.grep,        { desc = "Grep in workspace" })
-vim.keymap.set("n", "<leader>sw",      pick.grep_word,   { desc = "Grep word under cursor" })
-vim.keymap.set("n", "<leader>sd",      pick.diagnostics, { desc = "Pick diagnostics" })
-vim.keymap.set("n", "<leader>sr",      pick.resume,      { desc = "Resume last search" })
-vim.keymap.set("n", "<leader>gf",      pick.git_files,   { desc = "Pick git tracked files in workspace" })
 
 
 require("gitsigns").setup({
