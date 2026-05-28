@@ -147,6 +147,7 @@ require("snacks").setup({
     level = vim.log.levels.INFO,
   },
   toggle = {},
+  words = { enabled = true },
 })
 
 local pick = Snacks.picker
