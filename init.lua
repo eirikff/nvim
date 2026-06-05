@@ -586,6 +586,62 @@ vim.api.nvim_create_user_command("CopyAbsPath", function(args)
 end, { desc = "Copy absolute path of current buffer. Append ! to include line number", bang = true })
 
 
+vim.api.nvim_create_user_command("CopyToMd", function(args)
+  local mode = vim.fn.mode()
+
+  local start
+  local finish
+  if mode == "n" then
+    -- Likely run as :'<,'>CopyToMd
+    start = vim.fn.getpos("'<")
+    finish = vim.fn.getpos("'>")
+  else
+    start = vim.fn.getpos("v")
+    finish = vim.fn.getpos(".")
+  end
+
+  local getregion_type = mode
+  if mode == "n" then
+    getregion_type = "v"
+  end
+  local lines = vim.fn.getregion(start, finish, { type = getregion_type })
+
+  table.insert(lines, 1, "```" .. vim.bo.filetype)
+  table.insert(lines, "```")
+
+  if args.bang == true then
+    local path = vim.fn.expand("%:.")
+    local start_line = start[2]
+    local finish_line = finish[2]
+    local to_add = "`" .. path .. ":" .. start_line
+    if start_line ~= finish_line then
+      to_add = to_add .. ":" .. finish_line
+    end
+    to_add = to_add .. "`\n"
+    table.insert(lines, 1, to_add)
+  end
+
+  local formatted = table.concat(lines, "\n")
+  vim.fn.setreg("+", formatted)
+
+  vim.notify("Copied selection to clipboard")
+
+  -- Exit visual mode
+  local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
+  vim.api.nvim_feedkeys(esc, "x", false)
+
+  -- Highlight the visual range for feedback
+  vim.hl.range(
+    vim.api.nvim_get_current_buf(),
+    vim.api.nvim_create_namespace("visual_hl"),
+    "IncSearch",
+    { start[2], start[3] },
+    { finish[2], finish[3] },
+    { timeout = 300, regtype = getregion_type }
+  )
+end, { desc = "Copy visual selection as a markdown code block with language specifier", range = true, bang = true })
+
+
 --------------------------------------------------------------------------------
 --- KEYMAPS
 --------------------------------------------------------------------------------
@@ -611,4 +667,6 @@ Snacks.toggle.option("hlsearch"):map("<leader>ts")
 Snacks.toggle.option("wrap"):map("<leader>tw")
 vim.keymap.set("n", "<leader><c-g>", "<cmd>CopyRelPath<cr>", { desc = "Copy relative path of current buffer to system clipboard" })
 vim.keymap.set("n", "<leader>n<c-g>", "<cmd>CopyRelPath!<cr>", { desc = "Copy relative path with line number of current buffer to system clipboard" })
+vim.keymap.set({ "n", "v"}, "<leader>cb", "<cmd>CopyToMd<cr>")
+vim.keymap.set({ "n", "v"}, "<leader>ncb", "<cmd>CopyToMd!<cr>")
 
