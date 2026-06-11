@@ -387,10 +387,13 @@ require("mason-lspconfig").setup({
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", {}),
   callback = function(ev)
-    local function nmap(keys, func, desc)
+    local function map(mode, keys, func, desc)
       local opts = { buffer = ev.buf, silent = true, desc = desc }
-      vim.keymap.set("n", keys, func, opts)
+      vim.keymap.set(mode, keys, func, opts)
     end
+
+    local nmap = function(keys, func, desc) map("n", keys, func, desc) end
+    local imap = function(keys, func, desc) map("i", keys, func, desc) end
 
     nmap("K",          vim.lsp.buf.hover,          "Hover documentation")
     nmap("gD",         vim.lsp.buf.declaration,    "Goto declaration")
@@ -403,6 +406,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
     nmap("<leader>D",  pick.lsp_type_definitions,  "Type definitions")
     nmap("<leader>sd", pick.lsp_symbols,           "Document symbols")
     nmap("<leader>ws", pick.lsp_workspace_symbols, "Workspace symbols")
+
+    nmap("<C-k>",      vim.lsp.buf.signature_help, "Signature help")
+    imap("<C-k>",      vim.lsp.buf.signature_help, "Signature help")
   end,
 })
 
