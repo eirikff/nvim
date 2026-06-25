@@ -617,8 +617,8 @@ vim.api.nvim_create_user_command("CopyToMd", function(args)
 
   if args.bang == true then
     local path = vim.fn.expand("%:.")
-    local start_line = start[2]
-    local finish_line = finish[2]
+    local start_line = math.min(start[2], finish[2])
+    local finish_line = math.max(start[2], finish[2])
     local to_add = "`" .. path .. ":" .. start_line
     if start_line ~= finish_line then
       to_add = to_add .. ":" .. finish_line
