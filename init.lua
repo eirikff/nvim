@@ -392,6 +392,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.keymap.set(mode, keys, func, opts)
     end
 
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
     local nmap = function(keys, func, desc) map("n", keys, func, desc) end
     local imap = function(keys, func, desc) map("i", keys, func, desc) end
 
@@ -409,6 +410,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
     nmap("<C-k>",      vim.lsp.buf.signature_help, "Signature help")
     imap("<C-k>",      vim.lsp.buf.signature_help, "Signature help")
+
+    if client and client.name == "clangd" then
+      nmap("<leader>sh", "<cmd>LspClangdSwitchSourceHeader<cr>", "Switch between source and header file")
+    end
   end,
 })
 
