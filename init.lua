@@ -417,6 +417,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
+-- remove conflicting default lsp keymaps
+-- should go inside LspAttach, but fails with "No such keybind"
+vim.keymap.del("n", "gra")
+vim.keymap.del("n", "gri")
+vim.keymap.del("n", "grn")
+vim.keymap.del("n", "grr")
+vim.keymap.del("n", "grt")
+vim.keymap.del("n", "grx")
 
 --------------------------------------------------------------------------------
 --- TREESITTER
