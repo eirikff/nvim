@@ -671,7 +671,6 @@ vim.keymap.set("t", "jk", "<C-\\><C-n>")
 vim.keymap.set("n", "J", "mzJg`z<cmd>delmark z<cr>") -- keep cursor in place when using capital J
 vim.keymap.set("n", "n", "nzzzv") -- keep search term in middle of screen
 vim.keymap.set("n", "N", "Nzzzv")
-vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Keep yanked text when pasting over highlighted text" })
 vim.keymap.set({"n", "v"}, "<leader>y", [["+y]], { desc = "Copy text to system clipboard" })
