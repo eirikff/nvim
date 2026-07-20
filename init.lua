@@ -161,7 +161,7 @@ vim.keymap.set("n", "<leader>sr",      function() pick.resume() end,      { desc
 vim.keymap.set("n", "<leader>gf",      function() pick.git_files() end,   { desc = "Pick git tracked files in workspace" })
 
 
-require('mini.sessions').setup({
+require("mini.sessions").setup({
   autoread = true,
   verbose = {
     read = true,
@@ -170,8 +170,35 @@ require('mini.sessions').setup({
   },
 })
 
-require('mini.splitjoin').setup()
-require('mini.pairs').setup()
+require("mini.splitjoin").setup()
+require("mini.pairs").setup()
+require("mini.files").setup()
+
+local minifiles = {
+  show_dotfiles = true,
+  filter_show = function(fs_entry) return true end,
+  filter_hide = function(fs_entry) return not vim.startswith(fs_entry.name, '.') end,
+  toggle_dotfiles = nil,
+}
+-- defined outside table so minifiles is a valid object
+minifiles.toggle_dotfiles = function()
+  minifiles.show_dotfiles = not minifiles.show_dotfiles
+  local new_filter = (minifiles.show_dotfiles and minifiles.filter_show) or minifiles.filter_hide
+  MiniFiles.refresh({ content = { filter = new_filter } })
+end
+
+-- get line numbers in mini.files explorer
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'MiniFilesWindowOpen',
+  callback = function(args)
+    vim.wo[args.data.win_id].number = true
+    vim.wo[args.data.win_id].relativenumber = true
+
+    -- doesn't overwrite lsp local keymap for clangd switch header
+    vim.keymap.set("n", "<leader>sh", minifiles.toggle_dotfiles)
+  end,
+})
+
 
 local function try_get_bb_compile_commands()
   local ok, bb = pcall(require, "bugbrain.util")
@@ -665,7 +692,9 @@ end, { desc = "Copy visual selection as a markdown code block with language spec
 --- KEYMAPS
 --------------------------------------------------------------------------------
 vim.keymap.set("i", "jk", "<Esc>")
-vim.keymap.set("n", "<leader>pv", "<cmd>Ex<CR>", { desc = "Open netrw file browser" })
+-- vim.keymap.set("n", "<leader>pv", "<cmd>Ex<CR>", { desc = "Open netrw file browser" })
+vim.keymap.set("n", "<leader>pv", function() MiniFiles.open(vim.api.nvim_buf_get_name(0)) end, { desc = "Open mini file browser at current buffers location" })
+vim.keymap.set("n", "<leader>pV", function() MiniFiles.open(nil, false) end, { desc = "Open mini file browser in cwd" })
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>") -- map esc to exit terminal mode
 vim.keymap.set("t", "jk", "<C-\\><C-n>")
 vim.keymap.set("n", "J", "mzJg`z<cmd>delmark z<cr>") -- keep cursor in place when using capital J
