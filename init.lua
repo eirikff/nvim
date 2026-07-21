@@ -411,6 +411,55 @@ require("mason-lspconfig").setup({
   automatic_enable = true,
 })
 
+local function rename_results_to_qf()
+  local qf_items = {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    local show = vim.bo[buf].buflisted and vim.bo[buf].modified
+    if show then
+      local path = vim.api.nvim_buf_get_name(buf)
+
+      local curr_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+      local curr = table.concat(curr_lines, "\n")
+
+      local prev_lines = vim.fn.readfile(path)
+      local prev = table.concat(prev_lines, "\n")
+
+      vim.text.diff(prev, curr, {
+        on_hunk = function(start_a, len_a, start_b, len_b)
+          -- renames only affect single line
+          if len_a == len_b then
+            table.insert(qf_items, {
+              bufnr = buf,
+              lnum = start_b,
+              text = curr_lines[start_b],
+            })
+          end
+        end
+      })
+    end
+  end
+
+  vim.fn.setqflist({}, " ", {
+    title = "Unsaved changes",
+    items = qf_items
+  })
+  vim.cmd("copen")
+end
+
+local function rename_and_diff()
+  local orig_handler = vim.lsp.handlers['textDocument/rename']
+
+  vim.lsp.handlers['textDocument/rename'] = function(err, result, ctx, config)
+    -- run the real handler first so the workspace edit gets applied
+    orig_handler(err, result, ctx, config)
+    -- restore before calling our function, in case it triggers more LSP activity
+    vim.lsp.handlers['textDocument/rename'] = orig_handler
+    rename_results_to_qf()
+  end
+
+  vim.lsp.buf.rename()
+end
+
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", {}),
   callback = function(ev)
@@ -425,7 +474,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
     nmap("K",          vim.lsp.buf.hover,          "Hover documentation")
     nmap("gD",         vim.lsp.buf.declaration,    "Goto declaration")
-    nmap("<leader>rn", vim.lsp.buf.rename,         "Rename symbol with LSP")
+    nmap("<leader>rn", rename_and_diff,            "Rename symbol with LSP")
     nmap("<leader>ca", vim.lsp.buf.code_action,    "Code action")
 
     nmap("gd",         pick.lsp_definitions,       "Goto definition")
