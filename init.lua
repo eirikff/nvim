@@ -765,4 +765,5 @@ vim.keymap.set("n", "<leader><c-g>", "<cmd>CopyRelPath<cr>", { desc = "Copy rela
 vim.keymap.set("n", "<leader>n<c-g>", "<cmd>CopyRelPath!<cr>", { desc = "Copy relative path with line number of current buffer to system clipboard" })
 vim.keymap.set({ "n", "v"}, "<leader>cb", "<cmd>CopyToMd<cr>")
 vim.keymap.set({ "n", "v"}, "<leader>ncb", "<cmd>CopyToMd!<cr>")
-
+vim.keymap.set("n", "<leader>qo", "<cmd>copen<cr>", { desc = "Open quickfix list" })
+vim.keymap.set("n", "<leader>qc", "<cmd>cclose<cr>", { desc = "Close quickfix list" })
