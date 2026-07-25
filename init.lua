@@ -563,7 +563,6 @@ require("nvim-treesitter").install({
   "ssh_config",
   "strace",
   "tcl",
-  "tmux",
   "todotxt",
   "toml",
   "tsv",
