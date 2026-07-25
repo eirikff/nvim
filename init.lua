@@ -107,16 +107,20 @@ if bb_installed then
   -- Already on disk: register synchronously, no DNS check needed
   vim.pack.add({ { src = "git@gitlab.inne.proxdynamics.com:efalck/bugbrain.nvim.git" } })
 else
-  -- Not on disk: only attempt clone if we can reach the internal gitlab
-  vim.uv.getaddrinfo("gitlab.inne.proxdynamics.com", nil, {}, function(err, _)
-    vim.schedule(function()
-      if err then
-        vim.notify("Unable to reach internal gitlab; bugbrain.nvim not installed", vim.log.levels.WARN)
-      else
-        vim.pack.add({ { src = "git@gitlab.inne.proxdynamics.com:efalck/bugbrain.nvim.git" } })
-      end
+  -- Not on disk: only attempt clone if we can reach the internal gitlab and
+  -- hostname matches pattern
+  local hostname = vim.fn.hostname()
+  if hostname:find("HVA", 1, true) == 1 then
+    vim.uv.getaddrinfo("gitlab.inne.proxdynamics.com", nil, {}, function(err, _)
+      vim.schedule(function()
+        if err then
+          vim.notify("Unable to reach internal gitlab; bugbrain.nvim not installed", vim.log.levels.WARN)
+        else
+          vim.pack.add({ { src = "git@gitlab.inne.proxdynamics.com:efalck/bugbrain.nvim.git" } })
+        end
+      end)
     end)
-  end)
+  end
 end
 
 --------------------------------------------------------------------------------
