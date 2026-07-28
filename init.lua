@@ -43,7 +43,7 @@ vim.opt.timeoutlen = 1000 -- How long before a keymap is canceled
 vim.opt.termguicolors = true -- NOTE: You should make sure your terminal supports this
 vim.opt.colorcolumn = "80,100" -- Add columns
 vim.opt.scrolloff = 2 -- Add space at top/bottom when scrolling
-vim.opt.formatoptions = "jcrql" -- See :h fo-table for details on each letter
+vim.opt.formatoptions = "crqlj" -- See :h fo-table for details on each letter
 vim.opt.list = true
 vim.opt.listchars = {
   tab = "› ",
@@ -54,10 +54,10 @@ vim.opt.listchars = {
 }
 vim.opt.winborder = "rounded"
 
+vim.opt.tabstop = 8         -- a literal tab renders as this many columns wide (recommeded to keep at 8)
 vim.opt.expandtab = true    -- use spaces instead of tab characters
-vim.opt.tabstop = 4         -- a literal tab renders as 4 columns wide
-vim.opt.softtabstop = -1    -- -1 = copy shiftwidth, pressing <Tab> in insert mode inserts 4 spaces worth
-vim.opt.shiftwidth = 4      -- >> and << shift by 4 spaces
+vim.opt.shiftwidth = 4      -- amount of indent added with <<, >>, <c-t>, autoindent
+vim.opt.softtabstop = -1    -- -1 = copy shiftwidth, pressing <Tab> in insert mode inserts this many spaces worth
 
 -- Default to have all folds open at start
 vim.opt.foldlevel = 99
