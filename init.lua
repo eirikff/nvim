@@ -443,6 +443,11 @@ local function rename_results_to_qf()
     end
   end
 
+  -- only interesting if we have more than one other result
+  if #qf_items <= 2 then
+    return
+  end
+
   vim.fn.setqflist({}, " ", {
     title = "Unsaved changes",
     items = qf_items
