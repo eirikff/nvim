@@ -174,9 +174,8 @@ require("mini.sessions").setup({
   },
 })
 
-require("mini.splitjoin").setup()
-require("mini.pairs").setup()
 require("mini.files").setup()
+require("mini.cmdline").setup()
 
 local minifiles = {
   show_dotfiles = true,
