@@ -182,6 +182,23 @@ local minifiles = {
   filter_show = function(fs_entry) return true end,
   filter_hide = function(fs_entry) return not vim.startswith(fs_entry.name, '.') end,
   toggle_dotfiles = nil,
+
+  set_cwd = function()
+    local state = MiniFiles.get_explorer_state()
+    if state == nil then
+      return
+    end
+
+    if state.depth_focus > #state.windows then
+      return
+    end
+
+    local win = state.windows[state.depth_focus]
+    local new_cwd = win.path
+
+    vim.fn.chdir(new_cwd, "tabpage")
+    vim.notify("Set new cwd: " .. new_cwd)
+  end
 }
 -- defined outside table so minifiles is a valid object
 minifiles.toggle_dotfiles = function()
@@ -194,11 +211,13 @@ end
 vim.api.nvim_create_autocmd('User', {
   pattern = 'MiniFilesWindowOpen',
   callback = function(args)
-    vim.wo[args.data.win_id].number = true
-    vim.wo[args.data.win_id].relativenumber = true
+    local win_id = args.data.win_id
+    vim.wo[win_id].number = true
+    vim.wo[win_id].relativenumber = true
 
     -- doesn't overwrite lsp local keymap for clangd switch header
-    vim.keymap.set("n", "<leader>sh", minifiles.toggle_dotfiles)
+    vim.keymap.set("n", "<leader>sh", minifiles.toggle_dotfiles, { desc = "Toggle display of hidden files" })
+    vim.keymap.set("n", "<leader>cd", minifiles.set_cwd, { desc = "Set cwd to currently selected directory" })
   end,
 })
 
