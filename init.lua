@@ -98,6 +98,9 @@ vim.pack.add({
 
   -- Files / data
   { src = gh("hat0uma/csvview.nvim") },
+
+  -- Custom
+  { src = gh("eirikff/snacks-proximity.nvim") },
 })
 
 local bb_dir = vim.fn.stdpath("data") .. "/site/pack/core/opt/bugbrain.nvim"
@@ -146,7 +149,17 @@ require("snacks").setup({
   scope = { enabled = true },
   scroll = { enabled = true },
   statuscolumn = { enabled = true },
-  picker = {},
+  picker = {
+    formatters = {
+      file = {
+        truncate = "left",
+      },
+    },
+    matcher = {
+      cwd_bonus = true,
+      frequency = true,
+    },
+  },
   notifier = {
     level = vim.log.levels.INFO,
   },
@@ -155,10 +168,13 @@ require("snacks").setup({
 })
 
 local pick = Snacks.picker
+local prox = require("snacks-proximity")
 vim.keymap.set("n", "<leader>?",       function() pick.recent() end,      { desc = "Pick recent files" })
 vim.keymap.set("n", "<leader><space>", function() pick.buffers() end,     { desc = "Pick open buffers" })
-vim.keymap.set("n", "<leader>sf",      function() pick.files() end,       { desc = "Pick files from workspace" })
-vim.keymap.set("n", "<leader>sg",      function() pick.grep() end,        { desc = "Grep in workspace" })
+vim.keymap.set("n", "<leader>sf",      function() prox.files() end,       { desc = "Pick files close to current buffer" })
+vim.keymap.set("n", "<leader>sF",      function() pick.files() end,       { desc = "Pick files from cwd" })
+vim.keymap.set("n", "<leader>sg",      function() prox.grep() end,        { desc = "Grep close to current buffer" })
+vim.keymap.set("n", "<leader>sG",      function() pick.grep() end,        { desc = "Grep from cwd" })
 vim.keymap.set("n", "<leader>sw",      function() pick.grep_word() end,   { desc = "Grep word under cursor" })
 vim.keymap.set("n", "<leader>sd",      function() pick.diagnostics() end, { desc = "Pick diagnostics" })
 vim.keymap.set("n", "<leader>sr",      function() pick.resume() end,      { desc = "Resume last search" })
