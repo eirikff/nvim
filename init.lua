@@ -412,6 +412,8 @@ cmp.setup({
   },
 })
 
+require('cmp').setup.filetype('minifiles', { enabled = false })
+
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 vim.lsp.config("*", { capabilities = capabilities })
 
